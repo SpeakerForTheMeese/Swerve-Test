@@ -30,6 +30,12 @@ import frc1512.TestRobot.lib.SwerveSetpoint;
 import frc1512.TestRobot.lib.SwerveSetpointGenerator;
 import frc1512.TestRobot.lib.SwerveSetpointGenerator.KinematicLimits;
 
+
+
+
+/*loosly based on 5687 DriveTrain, for vision integration
+ (c 2023) Dennis Slobodzian and Simeon Phillsbury 
+ much has been altered he he he */
 public class DriveTrain  extends SubsystemBase{
     private final SwerveModule[] _modules;
     private static final int NORTH_EAST_MODULE_IDX = 1;
