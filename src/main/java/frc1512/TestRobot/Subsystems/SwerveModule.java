@@ -1,4 +1,4 @@
-package frc.robot.Subsystems;
+package frc1512.TestRobot.Subsystems;
 
 
 
@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc1512.TestRobot.Constants;
 
 public class SwerveModule extends SubsystemBase{
    

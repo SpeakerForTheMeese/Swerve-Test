@@ -1,12 +1,12 @@
-package frc.robot.Commands;
+package frc1512.TestRobot.Commands;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.OI;
-import frc.robot.Subsystems.DriveTrain;
+import frc1512.TestRobot.Constants;
+import frc1512.TestRobot.OI;
+import frc1512.TestRobot.Subsystems.DriveTrain;
 
 
 public class Drive extends CommandBase {
@@ -43,7 +43,7 @@ addRequirements(driveTrain);
 
        ChassisSpeeds chassisSpeeds;
        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        Xspeed, Yspeed, RotSpeed, _drivetrain.getRotation2d());
+        Xspeed, Yspeed, RotSpeed, _drivetrain.getHeadingRotation2d());
 
         SwerveModuleState[] moduleStates = Constants.DriveConstants.
         KDriveKinematics.toSwerveModuleStates(chassisSpeeds);

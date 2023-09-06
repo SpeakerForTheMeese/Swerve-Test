@@ -1,4 +1,4 @@
-package frc.robot.lib;
+package frc1512.TestRobot.lib;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is 254s SwerveSetpointGenerator but modified to use WPILibs Geometry classes and an
+ * This is 254s SwerveSetpointGenerator but modified by 5687 to use WPILibs Geometry classes and an
  * extension to the regula falsi method using Illinios or ITP for root finding.
  */
 public class SwerveSetpointGenerator {

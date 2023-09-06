@@ -1,4 +1,4 @@
-package frc.robot;
+package frc1512.TestRobot;
 
 public class RobotMap {
     public class CAN {

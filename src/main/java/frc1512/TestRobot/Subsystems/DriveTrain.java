@@ -1,4 +1,4 @@
-package frc.robot.Subsystems;
+package frc1512.TestRobot.Subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
@@ -18,15 +18,17 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.RobotMap;
-import frc.robot.lib.SwerveSetpoint;
-import frc.robot.lib.SwerveSetpointGenerator;
-import frc.robot.lib.SwerveSetpointGenerator.KinematicLimits;
+import frc1512.TestRobot.Constants;
+import frc1512.TestRobot.RobotContainer;
+import frc1512.TestRobot.RobotMap;
+import frc1512.TestRobot.lib.SwerveSetpoint;
+import frc1512.TestRobot.lib.SwerveSetpointGenerator;
+import frc1512.TestRobot.lib.SwerveSetpointGenerator.KinematicLimits;
 
 public class DriveTrain  extends SubsystemBase{
     private final SwerveModule[] _modules;
@@ -42,6 +44,8 @@ public class DriveTrain  extends SubsystemBase{
     private final SwerveDriveKinematics _kinematics;
     private final SwerveDriveOdometry _odometry;
     private final SwerveDrivePoseEstimator _poseEstimator;
+
+
     
 
     private final SwerveSetpointGenerator _SwerveSetpointGenerator;
@@ -78,24 +82,24 @@ public class DriveTrain  extends SubsystemBase{
             _modules[SOUTH_EAST_MODULE_IDX].getModuleLocation());
         _odometry = new SwerveDriveOdometry(
             _kinematics,
-            getRotation2d(),
+            getHeadingRotation2d(),
             new SwerveModulePosition[] {
                 _modules[NORTH_EAST_MODULE_IDX].getModluePosition(),
                 _modules[NORTH_WEST_MODULE_IDX].getModluePosition(),
                 _modules[SOUTH_EAST_MODULE_IDX].getModluePosition(),
                 _modules[SOUTH_EAST_MODULE_IDX].getModluePosition()
             },
-            new Pose2d(0, 0, getRotation2d()));
+            new Pose2d(0, 0, getHeadingRotation2d()));
         _poseEstimator = new SwerveDrivePoseEstimator(
             _kinematics,
-            getRotation2d(),
+            getHeadingRotation2d(),
             new SwerveModulePosition[] {
                 _modules[NORTH_EAST_MODULE_IDX].getModluePosition(),
                 _modules[NORTH_WEST_MODULE_IDX].getModluePosition(),
                 _modules[SOUTH_EAST_MODULE_IDX].getModluePosition(),
                 _modules[SOUTH_WEST_MODULE_IDX].getModluePosition()
             },
-            new Pose2d(0,0, getRotation2d()));
+            new Pose2d(0,0, getHeadingRotation2d()));
         
         _poseController = new HolonomicDriveController(
              new PIDController(
@@ -164,9 +168,24 @@ public class DriveTrain  extends SubsystemBase{
     public double getHeading(){
         return (Math.IEEEremainder(_imu.getYaw(), 360));
     }
+    public void updateOdometry(){
+        _odometry.update(
+            isRedAlliance() ? getHeadingRotation2d().minus(new Rotation2d(Math.PI)) : getHeadingRotation2d(),
+            new SwerveModulePosition[]{
+                _modules[NORTH_EAST_MODULE_IDX].getModluePosition(),
+                _modules[NORTH_WEST_MODULE_IDX].getModluePosition(),
+                _modules[SOUTH_EAST_MODULE_IDX].getModluePosition(),
+                _modules[SOUTH_WEST_MODULE_IDX].getModluePosition()}
+            
+        );
+    }
+    public Pose2d getOdometryPose() {
+        return _odometry.getPoseMeters();
+    }
+    
  
     
-    public Rotation2d getRotation2d(){
+    public Rotation2d getHeadingRotation2d(){
         return Rotation2d.fromDegrees(getHeading());
     }
     public void plotTrajectory(Trajectory t, String name){
@@ -183,6 +202,9 @@ public class DriveTrain  extends SubsystemBase{
             _IO.setpoint.moduleStates[module] = new SwerveModuleState(0.0, moduleAngle);
         }
     } 
+    public boolean isRedAlliance(){
+        return DriverStation.getAlliance() ==Alliance.Red;
+    }
         
     
     public void stopAll(){
@@ -190,6 +212,7 @@ public class DriveTrain  extends SubsystemBase{
         _modules[NORTH_WEST_MODULE_IDX].stopModule();
         _modules[SOUTH_EAST_MODULE_IDX].stopModule();
         _modules[SOUTH_WEST_MODULE_IDX].stopModule();
+
 
     }
     public void setModuleStates(SwerveModuleState[] desiredStates){
@@ -208,6 +231,9 @@ public class DriveTrain  extends SubsystemBase{
     }
     public SwerveSetpoint getSetpoint() {
         return _IO.setpoint;
+    }
+    public void setSnapHeading(Rotation2d heading){
+        
     }
     public void setKinematicLimits(KinematicLimits limits) {
         if (limits !=  _kinematicLimits) {
@@ -240,10 +266,24 @@ public class DriveTrain  extends SubsystemBase{
     public void setVelocityPose(Pose2d pose)   {
         ChassisSpeeds speeds = 
             _poseController.calculate(
-                _IO.esitmatedPose, pose, 0.0, _IO.heading); 
-                
-                       
-    }              
+                _IO.esitmatedPose, pose, 0.0, _IO.heading);                     
+    }            
+    public void resetRobotPose( Pose2d position) {
+        for (int module = 0; module < _modules.length; module++ ) {
+            _modules[module].resetEncoders();
+            _poseEstimator.resetPosition(
+                getHeadingRotation2d(),
+                new SwerveModulePosition[]{
+                _modules[NORTH_EAST_MODULE_IDX].getModluePosition(),
+                _modules[NORTH_WEST_MODULE_IDX].getModluePosition(),
+                _modules[SOUTH_EAST_MODULE_IDX].getModluePosition(),
+                _modules[SOUTH_WEST_MODULE_IDX].getModluePosition()
+                }, 
+                position
+            );
+            _IO.esitmatedPose = _poseEstimator.getEstimatedPosition();
+        }
+    } 
             
                            
     

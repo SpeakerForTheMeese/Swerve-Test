@@ -1,12 +1,12 @@
-package frc.robot;
+package frc1512.TestRobot;
 
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Subsystems.SwerveModule;
-import frc.robot.lib.SwerveSetpointGenerator;
-import frc.robot.lib.SwerveSetpointGenerator.KinematicLimits;
+import frc1512.TestRobot.Subsystems.SwerveModule;
+import frc1512.TestRobot.lib.SwerveSetpointGenerator;
+import frc1512.TestRobot.lib.SwerveSetpointGenerator.KinematicLimits;
 
 public class Constants {
     public static final double EPSILON = 1e-9;
